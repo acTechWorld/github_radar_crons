@@ -1,0 +1,234 @@
+[
+  {
+    "cluster_id": 0,
+    "category": "Front-End Development Tools",
+    "summary": "A collection of tools for building and designing front-end applications.",
+    "projects": [
+      "form-builder",
+      "api-check",
+      "chartdb"
+    ],
+    "innovative_projects": [
+      {
+        "name": "Dynamic UI Builder",
+        "description": "An innovative tool that allows users to design and build dynamic user interfaces without writing code."
+      },
+      {
+        "name": "Front-End Performance Analyzer",
+        "description": "A cutting-edge tool that provides real-time analysis of front-end performance issues, helping developers optimize their applications for better user experience."
+      },
+      {
+        "name": "AI-Powered Design Assistant",
+        "description": "An AI-driven design assistant that suggests layouts, color schemes, and typography based on the application's purpose and target audience."
+      }
+    ]
+  },
+  {
+    "cluster_id": 1,
+    "category": "Web Development Frameworks",
+    "summary": "A collection of frameworks for building web applications using React, Vue, and other technologies.",
+    "projects": [
+      "zashboard",
+      "number-flow",
+      "hello-edge",
+      "kokonutui"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Generated UI Components",
+        "description": "A revolutionary tool that generates custom UI components based on AI-driven design principles, ensuring consistent and visually appealing user interfaces."
+      },
+      {
+        "name": "Real-Time Web Development Platform",
+        "description": "An innovative platform that enables real-time collaboration and development of web applications, allowing teams to work together seamlessly."
+      },
+      {
+        "name": "WebAssembly-Based Framework",
+        "description": "A cutting-edge framework that leverages WebAssembly for faster and more efficient web application development, enabling developers to build complex applications quickly."
+      }
+    ]
+  },
+  {
+    "cluster_id": 2,
+    "category": "Online Tools and Editors",
+    "summary": "A collection of online tools and editors for creating and editing content, including Markdown editors.",
+    "projects": [
+      "InkStone-Markdown",
+      "wechat-article-exporter",
+      "yunda"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Powered Content Creation Tool",
+        "description": "A groundbreaking tool that uses AI to assist in the creation of high-quality content, including articles and blog posts."
+      },
+      {
+        "name": "Real-Time Collaboration Platform",
+        "description": "An innovative platform that enables real-time collaboration on content creation, allowing teams to work together seamlessly."
+      },
+      {
+        "name": "AI-Driven Content Suggestion Tool",
+        "description": "A cutting-edge tool that suggests relevant and high-quality content based on user preferences and engagement metrics."
+      }
+    ]
+  },
+  {
+    "cluster_id": 3,
+    "category": "AI-Powered Development Tools",
+    "summary": "A collection of tools that leverage AI to improve web development, including generative design and AI-driven UI components.",
+    "projects": [
+      "stockchat",
+      "fragments",
+      "nextjs-starter"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Generated Code Assistant",
+        "description": "A revolutionary tool that generates custom code based on user input and project requirements, reducing development time and improving accuracy."
+      },
+      {
+        "name": "Generative Design Platform",
+        "description": "An innovative platform that uses AI to generate custom designs for web applications, ensuring visually appealing and effective user interfaces."
+      },
+      {
+        "name": "AI-Powered Code Review Tool",
+        "description": "A cutting-edge tool that uses AI to review code, providing suggestions for improvement and detecting potential bugs."
+      }
+    ]
+  },
+  {
+    "cluster_id": 4,
+    "category": "Web Development Libraries and Frameworks",
+    "summary": "A collection of libraries and frameworks for building web applications using React, including tools for debugging and performance optimization.",
+    "projects": [
+      "onlook",
+      "openai-realtime-console"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Performance Optimization Tool",
+        "description": "A groundbreaking tool that uses AI to optimize web application performance, reducing load times and improving user experience."
+      },
+      {
+        "name": "Real-Time Debugging Platform",
+        "description": "An innovative platform that enables real-time debugging of web applications, allowing developers to identify and fix issues quickly."
+      },
+      {
+        "name": "AI-Powered UI Component Library",
+        "description": "A cutting-edge library that uses AI to generate custom UI components based on user input and project requirements, ensuring visually appealing and effective user interfaces."
+      }
+    ]
+  },
+  {
+    "cluster_id": 5,
+    "category": "Music and Media Players",
+    "summary": "A collection of music and media players for various platforms, including desktop and mobile applications.",
+    "projects": [
+      "VutronMusic",
+      "MoeKoeMusic"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Music Recommendation System",
+        "description": "A groundbreaking system that uses AI to recommend music based on user preferences and listening history."
+      },
+      {
+        "name": "Real-Time Media Streaming Platform",
+        "description": "An innovative platform that enables real-time media streaming, allowing users to access their favorite content instantly."
+      },
+      {
+        "name": "AI-Powered Audio Enhancement Tool",
+        "description": "A cutting-edge tool that uses AI to enhance audio quality, reducing noise and improving overall listening experience."
+      }
+    ]
+  },
+  {
+    "cluster_id": 6,
+    "category": "Web Development Templates and Themes",
+    "summary": "A collection of templates and themes for building web applications using Vue and Nuxt.",
+    "projects": [
+      "inspira-ui",
+      "sport-mall"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Template Generator",
+        "description": "A revolutionary tool that generates custom templates based on user input and project requirements, ensuring visually appealing and effective user interfaces."
+      },
+      {
+        "name": "Real-Time Theme Editor",
+        "description": "An innovative platform that enables real-time editing of themes for web applications, allowing developers to customize their projects quickly."
+      },
+      {
+        "name": "AI-Powered Design System Generator",
+        "description": "A cutting-edge tool that uses AI to generate custom design systems based on user input and project requirements, ensuring consistent and visually appealing user interfaces."
+      }
+    ]
+  },
+  {
+    "cluster_id": 7,
+    "category": "Blockchain Development Tools",
+    "summary": "A collection of tools for building smart contracts and blockchain applications.",
+    "projects": [
+      "Smart-Contract-Obfuscator"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Smart Contract Generator",
+        "description": "A groundbreaking tool that uses AI to generate custom smart contracts based on user input and project requirements, ensuring secure and efficient transactions."
+      },
+      {
+        "name": "Real-Time Blockchain Development Platform",
+        "description": "An innovative platform that enables real-time development of blockchain applications, allowing developers to build and deploy smart contracts quickly."
+      },
+      {
+        "name": "AI-Powered Security Audit Tool",
+        "description": "A cutting-edge tool that uses AI to audit smart contracts for security vulnerabilities, ensuring the integrity and trustworthiness of blockchain transactions."
+      }
+    ]
+  },
+  {
+    "cluster_id": 8,
+    "category": "ChatGPT-Based Tools",
+    "summary": "A collection of tools that leverage ChatGPT technology for various applications.",
+    "projects": [
+      "ChatGPT-Mirror"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Content Generation Tool",
+        "description": "A revolutionary tool that uses AI to generate high-quality content based on user input and project requirements, reducing the need for human writers."
+      },
+      {
+        "name": "Real-Time ChatGPT Integration Platform",
+        "description": "An innovative platform that enables real-time integration of ChatGPT technology with various applications, allowing developers to build custom interfaces quickly."
+      },
+      {
+        "name": "AI-Powered Answer Generation Tool",
+        "description": "A cutting-edge tool that uses AI to generate accurate and informative answers based on user queries, reducing the need for human moderators."
+      }
+    ]
+  },
+  {
+    "cluster_id": 9,
+    "category": "Developer Portfolio and Showcase Tools",
+    "summary": "A collection of tools for building developer portfolios and showcasing projects.",
+    "projects": [
+      "vue-developer-portfolio"
+    ],
+    "innovative_projects": [
+      {
+        "name": "AI-Driven Project Recommendation System",
+        "description": "A groundbreaking system that uses AI to recommend relevant projects based on user preferences and skills."
+      },
+      {
+        "name": "Real-Time Portfolio Builder Platform",
+        "description": "An innovative platform that enables real-time building of developer portfolios, allowing developers to showcase their projects and skills quickly."
+      },
+      {
+        "name": "AI-Powered Resume Generation Tool",
+        "description": "A cutting-edge tool that uses AI to generate high-quality resumes based on user input and project requirements, reducing the need for human writers."
+      }
+    ]
+  }
+]
