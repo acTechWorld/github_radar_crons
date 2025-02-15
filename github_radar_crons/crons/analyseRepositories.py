@@ -14,7 +14,7 @@ def getTopicsTrendingRepositories():
     # Fetch trending repositories
     res = fetch_repositories({"is_trending": True, "created_after": "2024-06-01"})
     print(res["totalCount"])
-    datas = fetch_repositories({"is_trending": True, "limit": res["totalCount"], "created_after": "2024-06-01"})
+    datas=fetch_repositories({"is_trending": True, "limit": res["totalCount"], "created_after": "2024-06-01"})
     repositories = datas["items"]
 
     # Map repositories to relevant data
@@ -34,59 +34,64 @@ def getTopicsTrendingRepositories():
     for i in range(min(len(repo_data), len(clusters))):
         clustered_repos[clusters[i]].append(repo_data[i])
 
-    # Instruction text for LLM to analyze all clusters at once and suggest new projects
+    # Instruction text for LLM to analyze all clusters at once
     instruction_text = """
---- WHAT YOU SHOULD DO ---
+--- TASK OVERVIEW ---
 
 ### INPUT FORMAT:
-- You will be provided with multiple groups (clusters) of GitHub repositories.
-- Each cluster is a JSON object with the following structure:
+- You will be provided with **multiple clusters** of GitHub repositories.
+- Each cluster contains repositories that share a **common theme**.
+- A cluster is represented as:
   {
     "cluster_id": [Cluster_ID],  # The ID of the cluster
     "repositories": [
       {
-        "name": "[REPOSITORY_NAME]",  # Name of the repository
-        "description": "[REPOSITORY_DESCRIPTION]"  # Description of what the repository does
+        "name": "[REPOSITORY_NAME]",  
+        "description": "[REPOSITORY_DESCRIPTION]"  
       },
       ...
     ]
   }
-- Each cluster represents related repositories sharing a common trend or topic.
 
-### TASK:
-- Analyze **each cluster individually** and provide:
-  1. **A category name** that describes the overall theme of the cluster.
-  2. **A short summary** explaining the repositories in that cluster.
-  3. **A list of project names** in the cluster.
-  4. **Three innovative project ideas** related to the cluster theme.
+### YOUR TASK:
+For each **cluster**, generate:
+1️⃣ **A category name** that accurately represents the common theme of the repositories.  
+2️⃣ **A clear and concise summary** explaining the key trends, technologies, or innovation in that category.  
+3️⃣ **A list of project names** inside that cluster.  
+4️⃣ **Three innovative project ideas** that could emerge from this trend.  
+   - These should be **unique, specific, and practical** (avoid generic AI-powered descriptions).  
 
 ### OUTPUT FORMAT:
-- Your response must be **only a JSON array** with the following structure:
+- Return a **JSON array only** with the following structure:
 [
     {   
         "cluster_id": [Cluster_ID],
-        "category": "[TREND_NAME]",  # A meaningful label for the trend
-        "summary": "[Short description of the trend or technology]",
-        "projects": ["Project 1", "Project 2", ...],  # Existing projects in this trend
+        "category": "[TREND_NAME]",  
+        "summary": "[Detailed explanation of the trend]",
+        "projects": ["Project 1", "Project 2", ...],
         "innovative_projects": [
             {
-                "name": "[Innovative Project 1]",
-                "description": "[Brief description of why it's innovative]"
+                "name": "[Project Idea 1]",
+                "description": "[Unique and technically relevant project idea]"
             },
             {
-                "name": "[Innovative Project 2]",
-                "description": "[Brief description of why it's innovative]"
+                "name": "[Project Idea 2]",
+                "description": "[Distinct from others and clearly useful]"
             },
             {
-                "name": "[Innovative Project 3]",
-                "description": "[Brief description of why it's innovative]"
+                "name": "[Project Idea 3]",
+                "description": "[Solves a real-world problem effectively]"
             }
         ]
     },
     ...
 ]
-- **Do not add any extra text outside of the JSON array.**
-- **Respond only with valid JSON. Do not write an introduction or summary.**
+
+### IMPORTANT NOTES:
+- 🚀 **Be original**: Avoid overused terms like "AI-powered tool" without explaining how it actually works.  
+- 🔬 **Be specific**: Instead of "Real-Time Debugging," describe a **live execution visualizer for JS frameworks**.  
+- 💡 **Think beyond AI**: Some innovations could be **blockchain-based, edge computing, WebAssembly, or quantum programming**.  
+- 📜 **Respond with valid JSON only**: No additional text, introductions, or summaries.
 """
 
     # Combine all clustered repositories into a list for LLM input
@@ -100,16 +105,19 @@ def getTopicsTrendingRepositories():
     # Convert the list into a JSON string
     formatted_input = json.dumps(all_clusters, indent=2, ensure_ascii=False)
 
-    # Seed the LLM response with an opening bracket '[' to enforce JSON array output
+       # Seed the LLM response with an opening bracket '[' to enforce JSON array output
     seeded_prompt = "[\n"
-
+    print([
+        {"role": "system", "content": instruction_text},
+        {"role": "user", "content": formatted_input},
+        {"role": "assistant", "content": seeded_prompt}  # Enforce array format
+    ])
     # Send all clusters to LLM with a **forced prefix**
     response = chat_multi([
         {"role": "system", "content": instruction_text},
         {"role": "user", "content": formatted_input},
         {"role": "assistant", "content": seeded_prompt}  # Enforce array format
     ])
-
     response_content = response['message']['content'].strip()
 
     # Ensure response starts with '[' and ends with ']' (fallback if needed)
