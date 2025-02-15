@@ -10,6 +10,7 @@ import numpy as np
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")  # Small & fast embedding model
 
+
 def getTopicsTrendingRepositories():
     # Fetch trending repositories
     res = fetch_repositories({"is_trending": True, "created_after": "2024-06-01"})
