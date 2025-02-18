@@ -33,7 +33,6 @@ def chat_mono(message):
 
 
 def chat_multi(messages):
-
     # Send a GET request to the API
     base_url = os.getenv('OLLAMA_BASED_URL')
     # Combine the base URL and API path
@@ -41,7 +40,7 @@ def chat_multi(messages):
 
     bodyMessage = {
         #"model": "llama3.1:8b",
-        "model": "llama3.1:8b_32K",
+        "model": "llama3.1:8b_32K", 
         "messages": messages,
         "stream": False
     }
