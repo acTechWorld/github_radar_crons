@@ -40,8 +40,8 @@ def chat_multi(messages):
     full_url = f"{base_url}/api/chat"
 
     bodyMessage = {
-        "model": "llama3.1:8b",
-        #"model": "llama3.1:8b_32K",
+        #"model": "llama3.1:8b",
+        "model": "llama3.1:8b_32K",
         "messages": messages,
         "stream": False
     }

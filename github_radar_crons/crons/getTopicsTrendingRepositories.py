@@ -13,9 +13,9 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")  # Small & fast embedd
 
 def getTopicsTrendingRepositories():
     # Fetch trending repositories
-    res = fetch_repositories({"is_trending": True, "created_after": "2024-06-01"})
+    res = fetch_repositories({"trendingTypes": "last_6_months", "trendingTypesOperation": "OR"})
     print(res["totalCount"])
-    datas=fetch_repositories({"is_trending": True, "limit": res["totalCount"], "created_after": "2024-06-01"})
+    datas=fetch_repositories({"trendingTypes": "last_6_months", "trendingTypesOperation": "OR", "limit": res["totalCount"]})
     repositories = datas["items"]
 
     # Map repositories to relevant data
