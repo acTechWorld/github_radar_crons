@@ -41,6 +41,7 @@ def chat_multi(messages):
 
     bodyMessage = {
         "model": "llama3.1:8b",
+        #"model": "llama3.1:8b_32K",
         "messages": messages,
         "stream": False
     }
