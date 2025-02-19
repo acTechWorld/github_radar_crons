@@ -2,7 +2,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from api.ollama import chat_multi
 import json
-from api.repositories import fetch_repositories
+from api.repositories import fetch_repositories, saveAIContent
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -17,7 +17,7 @@ def similarity_score(a, b):
     return cosine_similarity(vec_a, vec_b)[0][0]
 
 # Function to summarize a project's README content
-def get_project_summary(description):
+def get_project_summary(readme):
     instruction_text = "Summarize the project's main idea and the problem it solves."
     instruction_text = """
 --- TASK OVERVIEW ---
@@ -40,8 +40,9 @@ Summarize the readme to get:
 
 ### IMPORTANT NOTES:
 - 📜 **Respond with valid JSON only**: No additional text, introductions, or summaries.
+- All your generated content must be translated in english
 """
-    formatted_input = description
+    formatted_input = readme
     seeded_prompt = "{" # You can add any pre-seeding context here if needed
     
     response = chat_multi([
@@ -61,32 +62,38 @@ Summarize the readme to get:
 
 # Compare two repositories: React vs Vue
 def compareTwoRepositoriesPopulation(list_compared, list_to_compare_with): 
-
+    result= []
     # Fetch and summarize README content for React projects
     list_to_compare_with_summaries = {}
     for project in list_to_compare_with:
         content = get_project_summary(project['readme'])
+        print(content)
         list_to_compare_with_summaries[project['name']] = content['main_idea'] + ' ' +  content['solving'] # Summarize the README
 
     # Fetch and summarize README content for Vue projects
     list_compared_summaries = {}
     for project in list_compared:
         content = get_project_summary(project['readme'])
+        print(content)
         list_compared_summaries[project['name']] = content['main_idea'] + ' ' +  content['solving'] # Summarize the README
 
     for r_name, r_summary in list_to_compare_with_summaries.items():
         scores = [(v_name, similarity_score(r_summary, v_summary)) for v_name, v_summary in list_compared_summaries.items()]
         if scores:
             closest = max(scores, key=lambda x: x[1])
-            print(f"- {r_name} (Closest Vue project: {closest[0]}, Similarity: {closest[1]:.2f})")
+            result.append({"repo_compared": r_name, "similar_repo": closest[0], "value": closest[1]})
         else:
             print(f"- {r_name} (No Vue projects available for comparison)")
+    return result
 
-# Run the comparison function
+trendingTypes = ["last_6_months"]
+for trendingType in trendingTypes:
+    reactRepos = fetch_repositories({"languages": "React", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": trendingType, "trendingTypesOperation": "OR"})
+    vueRepos = fetch_repositories({"languages": "Vue", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": trendingType, "trendingTypesOperation": "OR"})
 
-reactRepos = fetch_repositories({"languages": "React", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": "global", "trendingTypesOperation": "OR"})
-vueRepos = fetch_repositories({"languages": "Vue", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": "global", "trendingTypesOperation": "OR"})
-
-reactRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in reactRepos["items"]]
-vueRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in vueRepos["items"]]
-compareTwoRepositoriesPopulation(vueRepos, reactRepos)
+    reactRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in reactRepos["items"]]
+    vueRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in vueRepos["items"]]
+    res = compareTwoRepositoriesPopulation(vueRepos, reactRepos)
+    print(res)
+    saveAIContent({"name": f"compareTwoRepositoriesPopulation_{trendingType}", "type": "compareTwoRepositoriesPopulation", "content": json.dumps(res, default=float)})
+    

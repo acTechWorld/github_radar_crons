@@ -13,7 +13,7 @@ def chat_mono(message):
     full_url = f"{base_url}/api/chat"
 
     bodyMessage = {
-        "model": "deepseek-r1:14b",
+        "model": os.getenv("OLLAMA_MODEL"), 
         "messages": [{
             "role": "user",
             "content": message
@@ -39,8 +39,7 @@ def chat_multi(messages):
     full_url = f"{base_url}/api/chat"
 
     bodyMessage = {
-        #"model": "llama3.1:8b",
-        "model": "llama3.1:8b_32K", 
+        "model": os.getenv("OLLAMA_MODEL"), 
         "messages": messages,
         "stream": False
     }
