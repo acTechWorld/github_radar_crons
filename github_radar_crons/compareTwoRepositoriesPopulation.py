@@ -2,7 +2,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 from api.ollama import chat_multi
 import json
-from api.repositories import fetch_repositories, saveAIContent
+from api.repositories import fetch_repositories, saveAiReposComparaisons, getAiRepoAnalysisByNameAndOwner, saveAiRepoAnalysis
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -17,7 +17,7 @@ def similarity_score(a, b):
     return cosine_similarity(vec_a, vec_b)[0][0]
 
 # Function to summarize a project's README content
-def get_project_summary(readme):
+def get_repo_summary_from_ai(readme):
     instruction_text = "Summarize the project's main idea and the problem it solves."
     instruction_text = """
 ### TASK OVERVIEW ###
@@ -62,35 +62,38 @@ IMPORTANT NOTES:
         response_content += "}"
     return json.loads(response_content)
 
-def fetch_summaries(projects):
-    summaries = {}
-    for project in projects:
-        try:
-            summary = get_project_summary(project['readme'])
-            print(summary)
-            summaries[project['name']] = summary['main_idea'] + ' ' + summary['solving']
-        except:
-            print("An exception occurred")
-    return summaries
+def get_repo_summary(repo):
+    apiRes = getAiRepoAnalysisByNameAndOwner(repo['name'], repo['owner_name'])
+    if apiRes: 
+        return json.loads(apiRes['content'])
+    else:
+        repo_summary = get_repo_summary_from_ai(repo['readme'])
+        saveAiRepoAnalysis({
+            "repo_name": repo['name'],
+            "repo_owner": repo['owner_name'],
+            "content": json.dumps(repo_summary)
+        })
+        return repo_summary
 
 # Compare two repositories: React vs Vue
 def compareTwoRepositoriesPopulation(list_compared, list_to_compare_with): 
-    result = []
-    
-    # Limit both lists to the first 10 elements
-    list_to_compare_with = list_to_compare_with[:10]
-    list_compared = list_compared[:10]
+    result= []
+    # Fetch and summarize README content for React projects
+    list_to_compare_with_summaries = {}
+    for repo in list_to_compare_with:
+        repo_summary = get_repo_summary(repo)
+        print(repo_summary)
+        list_to_compare_with_summaries[repo['name'] + '_' + repo['owner_name']] = repo_summary['main_idea'] + ' ' +  repo_summary['solving'] # Summarize the README
 
-    # Get summaries for both groups using the merged helper function
-    list_to_compare_with_summaries = fetch_summaries(list_to_compare_with)
-    list_compared_summaries = fetch_summaries(list_compared)
-    
-    # Compare summaries and determine the most similar repository
-    for repo_name, repo_summary in list_to_compare_with_summaries.items():
-        scores = [
-            (comp_name, similarity_score(repo_summary, comp_summary))
-            for comp_name, comp_summary in list_compared_summaries.items()
-        ]
+    # Fetch and summarize README content for Vue projects
+    list_compared_summaries = {}
+    for repo in list_compared:
+        repo_summary = get_repo_summary(repo)
+        print(repo_summary)
+        list_compared_summaries[repo['name'] + '_' + repo['owner_name']] = repo_summary['main_idea'] + ' ' +  repo_summary['solving'] # Summarize the README
+
+    for repo_name, r_summary in list_to_compare_with_summaries.items():
+        scores = [(v_name, similarity_score(r_summary, v_summary)) for v_name, v_summary in list_compared_summaries.items()]
         if scores:
             closest_match = max(scores, key=lambda x: x[1])
             result.append({
@@ -107,10 +110,9 @@ for trendingType in trendingTypes:
     reactRepos = fetch_repositories({"languages": "React", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": trendingType, "trendingTypesOperation": "OR"})
     vueRepos = fetch_repositories({"languages": "Vue", "languagesOperation": "OR", "hasReadMe": "true", "trendingTypes": trendingType, "trendingTypesOperation": "OR"})
 
-    reactRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in reactRepos["items"]]
-    vueRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in vueRepos["items"]]
+    reactRepos = [{"name": repo["name"], "owner_name": repo['owner_name'], "description": repo["description"], "readme":  repo["readme_content"]} for repo in reactRepos["items"]]
+    vueRepos = [{"name": repo["name"], "owner_name": repo['owner_name'], "description": repo["description"], "readme":  repo["readme_content"]} for repo in vueRepos["items"]]
     res = compareTwoRepositoriesPopulation(vueRepos, reactRepos)
     print(res)
-    nameAIContent = f"compareTwoRepositoriesPopulation_{trendingType}"
-    saveAIContent(nameAIContent, {"name": nameAIContent, "type": "compareTwoRepositoriesPopulation", "content": json.dumps(res, default=float)})
+    saveAiReposComparaisons({"name": f"compareTwoRepositoriesPopulation_{trendingType}", "type": "compareTwoRepositoriesPopulation", "content": json.dumps(res, default=float)})
     

@@ -6,30 +6,33 @@ from dotenv import load_dotenv
 load_dotenv()
 base_url = os.getenv('GITHUB_BACKEND_BASED_URL')
 
+def send_request(method, path, json_body=None, params=None):
+    full_url = f"{base_url}{path}"
+    response = requests.request(method, full_url, json=json_body, params=params)
+    
+    if response.status_code in [200, 201]:
+        return response.json()
+    elif response.status_code == 404:
+        return None
+    else:
+        print(f"Error {response.status_code}: {response.text}")
+        return None
+
 def fetch_repositories(params):
+    return send_request("GET", "/api/repositories", params=params)
 
-    # Combine the base URL and API path
-    full_url = f"{base_url}/api/repositories"
-    # Send a GET request to the external API with the parameters
-    response = requests.get(full_url, params=params)
+def getAiReposComparaisonsByName(name):
+    return send_request("GET", f"/api/aiReposComparaisons/name/{name}")
 
-    # If the request is successful (status code 200), return the JSON data
-    if response.status_code == 200:
-        return response.json()  # Return the data as JSON
-    else:
-        # If the request fails, return an error message
-        print(f"Error: Failed to fetch data from the API fetch_repositories. Status Code: {response.status_code}")
-        print(f"Response Text: {response.text}")
+def saveAiReposComparaisons(jsonBody):
+    existing_data = getAiReposComparaisonsByName(jsonBody.get("name"))
+    method = "PUT" if existing_data else "POST"
+    return send_request(method, "/api/aiReposComparaisons", json_body=jsonBody)
 
-def saveAIContent(jsonBody):
-    # Combine the base URL and API path
-    full_url = f"{base_url}/api/aiContents"
-    # Send a GET request to the external API with the parameters
-    response = requests.post(full_url, json=jsonBody)
+def getAiRepoAnalysisByNameAndOwner(name, owner):
+    return send_request("GET", f"/api/aiRepoAnalysis/name/{name}/owner/{owner}")
 
-    if response.status_code == 201:
-        return response.json()  # Return the data as JSON
-    else:
-        # If the request fails, return an error message
-        print(f"Error: Failed to fetch data from the API saveAIContent. Status Code: {response.status_code}")
-        print(f"Response Text: {response.text}")
+def saveAiRepoAnalysis(jsonBody):
+    existing_data = getAiRepoAnalysisByNameAndOwner(jsonBody.get("name"), jsonBody.get("owner"))
+    method = "PUT" if existing_data else "POST"
+    return send_request(method, "/api/aiRepoAnalysis", json_body=jsonBody)
