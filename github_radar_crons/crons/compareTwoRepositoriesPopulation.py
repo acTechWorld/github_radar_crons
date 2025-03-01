@@ -20,27 +20,30 @@ def similarity_score(a, b):
 def get_project_summary(readme):
     instruction_text = "Summarize the project's main idea and the problem it solves."
     instruction_text = """
---- TASK OVERVIEW ---
+### TASK OVERVIEW ###
 
-### INPUT FORMAT:
-- You will be provided with the text of a github readme project.
+#### INPUT FORMAT:
+- You will be provided with the text of a GitHub README file.
 
-### YOUR TASK:
-Summarize the readme to get:
-1) The project main idea 
-2) What is the problem the project solves. 
+#### YOUR TASK:
+1. **Translation**: If the README content is not entirely in English, translate the entire content into English first.
+2. **Summarization**: From the (translated) README, extract:
+   - **Main Idea** – The primary concept or purpose of the project.
+   - **Problem Solved** – The specific issue or need the project addresses.
 
-### OUTPUT FORMAT:
-- Return a **JSON object only** with the following structure:
-{   
-    "main_idea": "[The project main idea]",  
-    "solving": "[What is the problem the project solves]"
+#### OUTPUT FORMAT:
+- Return a **valid JSON object only**, structured as follows:
+
+```json
+{
+    "main_idea": "[The project's main idea]",
+    "solving": "[The problem the project solves]"
 }
-
-
-### IMPORTANT NOTES:
-- 📜 **Respond with valid JSON only**: No additional text, introductions, or summaries.
-- All your generated content must be translated in english
+IMPORTANT NOTES: 
+📜 Strictly return JSON – No extra text, explanations, or introductions.
+🌍 All extracted content must be in English.
+⚠️ If information is missing, infer from the README or return an empty string.
+🔄 Ensure valid JSON formatting, including proper character escaping.
 """
     formatted_input = readme
     seeded_prompt = "{" # You can add any pre-seeding context here if needed
@@ -57,33 +60,46 @@ Summarize the readme to get:
         response_content = "{" + response_content
     if not response_content.endswith("}"):
         response_content += "}"
-    print(response_content)
     return json.loads(response_content)
+
+def fetch_summaries(projects):
+    summaries = {}
+    for project in projects:
+        try:
+            summary = get_project_summary(project['readme'])
+            print(summary)
+            summaries[project['name']] = summary['main_idea'] + ' ' + summary['solving']
+        except:
+            print("An exception occurred")
+    return summaries
 
 # Compare two repositories: React vs Vue
 def compareTwoRepositoriesPopulation(list_compared, list_to_compare_with): 
-    result= []
-    # Fetch and summarize README content for React projects
-    list_to_compare_with_summaries = {}
-    for project in list_to_compare_with:
-        content = get_project_summary(project['readme'])
-        print(content)
-        list_to_compare_with_summaries[project['name']] = content['main_idea'] + ' ' +  content['solving'] # Summarize the README
+    result = []
+    
+    # Limit both lists to the first 10 elements
+    list_to_compare_with = list_to_compare_with[:10]
+    list_compared = list_compared[:10]
 
-    # Fetch and summarize README content for Vue projects
-    list_compared_summaries = {}
-    for project in list_compared:
-        content = get_project_summary(project['readme'])
-        print(content)
-        list_compared_summaries[project['name']] = content['main_idea'] + ' ' +  content['solving'] # Summarize the README
-
-    for r_name, r_summary in list_to_compare_with_summaries.items():
-        scores = [(v_name, similarity_score(r_summary, v_summary)) for v_name, v_summary in list_compared_summaries.items()]
+    # Get summaries for both groups using the merged helper function
+    list_to_compare_with_summaries = fetch_summaries(list_to_compare_with)
+    list_compared_summaries = fetch_summaries(list_compared)
+    
+    # Compare summaries and determine the most similar repository
+    for repo_name, repo_summary in list_to_compare_with_summaries.items():
+        scores = [
+            (comp_name, similarity_score(repo_summary, comp_summary))
+            for comp_name, comp_summary in list_compared_summaries.items()
+        ]
         if scores:
-            closest = max(scores, key=lambda x: x[1])
-            result.append({"repo_compared": r_name, "similar_repo": closest[0], "value": closest[1]})
+            closest_match = max(scores, key=lambda x: x[1])
+            result.append({
+                "repo_compared": repo_name,
+                "similar_repo": closest_match[0],
+                "value": closest_match[1]
+            })
         else:
-            print(f"- {r_name} (No Vue projects available for comparison)")
+            print(f"- {repo_name} (No repositories available for comparison)")
     return result
 
 trendingTypes = ["last_6_months"]
@@ -95,5 +111,6 @@ for trendingType in trendingTypes:
     vueRepos = [{"name": repo["name"], "description": repo["description"], "readme":  repo["readme_content"]} for repo in vueRepos["items"]]
     res = compareTwoRepositoriesPopulation(vueRepos, reactRepos)
     print(res)
-    saveAIContent({"name": f"compareTwoRepositoriesPopulation_{trendingType}", "type": "compareTwoRepositoriesPopulation", "content": json.dumps(res, default=float)})
+    nameAIContent = f"compareTwoRepositoriesPopulation_{trendingType}"
+    saveAIContent(nameAIContent, {"name": nameAIContent, "type": "compareTwoRepositoriesPopulation", "content": json.dumps(res, default=float)})
     
